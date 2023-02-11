@@ -52,12 +52,12 @@ app.post("/login", async (request, response) => {
   const dbUser = await db.get(selectUserQuery);
   if (dbUser === undefined) {
     response.status(400);
-    response.send("Invalid User");
+    response.send("Invalid user");
   } else {
     const isPasswordMatched = await bcrypt.compare(password, dbUser.password);
     if (isPasswordMatched === true) {
       response.status(200);
-      response.send("Login Success!");
+      response.send("Login success!");
     } else {
       response.status(400);
       response.send("Invalid password");
@@ -67,18 +67,18 @@ app.post("/login", async (request, response) => {
 
 app.put("/change-password", async (request, response) => {
   const { username, oldPassword, newPassword } = request.body;
-  const getUserQuery = `SELECT * FROM user where username = ${username};`;
+  const getUserQuery = `SELECT * FROM user where username = '${username}';`;
   const dbUser = await db.get(getUserQuery);
   if (dbUser === undefined) {
     response.status(400);
-    response.send("Invalid User");
+    response.send("Invalid user");
   } else {
     const isValidPassword = await bcrypt.compare(oldPassword, dbUser.password);
     if (isValidPassword === true) {
       const lengthOfNewPassword = newPassword.length;
       if (lengthOfNewPassword < 5) {
         response.status(400);
-        response.send("Password too short");
+        response.send("Password is too short");
       } else {
         const encryptedPassword = await bcrypt.hash(newPassword, 10);
         const updatePasswordQuery = `UPDATE user SET password = '${encryptedPassword}' 
